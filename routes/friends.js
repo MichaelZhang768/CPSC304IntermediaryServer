@@ -36,4 +36,20 @@ router.get("/:username/friends", function(req, res, next) {
     );
 });
 
+router.delete("/:username/friends/:friend", function(req, res, next) {
+    connection.query(
+        "DELETE FROM Friend " +
+        "WHERE username1 = '" + req.params.username + "' AND username2 = '" + req.params.friend + "'",
+        function(err) {
+            if (err) {
+                next(err);
+                return;
+            }
+
+            res.status(200);
+            res.end();
+        }
+    );
+});
+
 module.exports = router;

@@ -10,6 +10,7 @@ var index = require("./routes/index.js");
 var users = require("./routes/users.js");
 var profile = require("./routes/profile.js");
 var friends = require("./routes/friends.js");
+var publications = require("./routes/publications.js");
 var games = require("./routes/games.js");
 var payments = require("./routes/payments.js");
 
@@ -29,6 +30,7 @@ app.use("/", index);
 app.use("/", users);
 app.use("/", profile);
 app.use("/", friends);
+app.use("/", publications);
 app.use("/", games);
 app.use("/", payments);
 

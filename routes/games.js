@@ -19,6 +19,47 @@ router.get("/:username/all_games", function(req, res, next) {
     );
 });
 
+router.post("/:username/my_games", function(req, res, next) {
+    connection.query(
+        "SELECT currentPrice " +
+        "FROM Game " +
+        "WHERE gameId = '" + req.body.gameId + "'",
+        function(err, data) {
+            if (err) {
+                next(err);
+                return;
+            }
+
+            var currentPrice = data[0]["currentPrice"];
+            connection.query(
+                "INSERT INTO Owns (username, gameId, purchasePrice, dateOfPurchase) " +
+                "VALUES ('" + req.params.username + "', '" + req.body.gameId + "', " + currentPrice + ", STR_TO_DATE('" + req.body.dateOfPayment + "', '%Y-%m-%d')",
+                function(err) {
+                    if (err) {
+                        next(err);
+                        return;
+                    }
+
+                    connection.query(
+                        "UPDATE Users " +
+                        "SET accountBalance = accountBalance - " + currentPrice + " " +
+                        "WHERE username = '" + req.params.username + "'",
+                        function(err) {
+                            if (err) {
+                                next(err);
+                                return;
+                            }
+
+                            res.status(200);
+                            res.end();
+                        }
+                    );
+                }
+            );
+        }
+    );
+});
+
 router.get("/:username/my_games", function(req, res, next) {
     connection.query(
         "SELECT gameName, developerName, currentPrice " +
@@ -32,6 +73,47 @@ router.get("/:username/my_games", function(req, res, next) {
 
             res.status(200);
             res.json(data);
+        }
+    );
+});
+
+router.delete("/:username/my_games/:gameId", function(req, res, next) {
+    connection.query(
+        "SELECT purchasePrice " +
+        "FROM Owns " +
+        "WHERE gameId = " + req.params.gameId,
+        function(err, data) {
+            if (err) {
+                next(err);
+                return;
+            }
+
+            var purchasePrice = data[0]["purchasePrice"];
+            connection.query(
+                "DELETE FROM Owns " +
+                "WHERE gameId = " + req.params.gameId,
+                function(err) {
+                    if (err) {
+                        next(err);
+                        return;
+                    }
+
+                    connection.query(
+                        "UPDATE Users" +
+                        "SET accountBalance = accountBalance + " + purchasePrice + " " +
+                        "WHERE username = '" + req.params.username + "'",
+                        function(err) {
+                            if (err) {
+                                next(err);
+                                return;
+                            }
+
+                            res.status(200);
+                            res.end();
+                        }
+                    );
+                }
+            );
         }
     );
 });
