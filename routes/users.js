@@ -36,6 +36,57 @@ router.get("/users/:username", function(req, res, next) {
     );
 });
 
+router.get("/users/:username/checkIfAdmin", function(req, res, next) {
+    connection.query(
+        "SELECT * " +
+       "FROM AdminUser " +
+       "WHERE username = '" + req.params.username + "'",
+        function(err, data) {
+            if (err) {
+                next(err);
+                return;
+            }
+
+            res.status(200);
+            res.json(data);
+        }
+    );
+});
+
+router.get("/users/:username/checkIfRegular", function(req, res, next) {
+    connection.query(
+        "SELECT * " +
+        "FROM RegularUser " +
+        "WHERE username = '" + req.params.username + "'",
+        function(err, data) {
+            if (err) {
+                next(err);
+                return;
+            }
+
+            res.status(200);
+            res.json(data);
+        }
+    );
+});
+
+router.get("/users/:username/checkIfDeveloper", function(req, res, next) {
+    connection.query(
+        "SELECT * " +
+        "FROM Developer " +
+        "WHERE developerName = '" + req.params.username + "'",
+        function(err, data) {
+            if (err) {
+                next(err);
+                return;
+            }
+
+            res.status(200);
+            res.json(data);
+        }
+    );
+});
+
 router.get("/user_usernames/:username", function(req, res, next) {
     connection.query(
         "SELECT username " +
