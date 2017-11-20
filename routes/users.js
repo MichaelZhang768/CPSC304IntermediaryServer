@@ -3,14 +3,54 @@ var router = express.Router();
 
 var connection = require("../lib/connection.js");
 
-router.get("/users/", function(req, res) {
-    connection.query("SELECT * FROM Users", function(err, data) {
-        if (err) {
-            throw err;
+router.post("/users", function(req, res, next) {
+    connection.query(
+        "INSERT INTO Users (username, password, email) " +
+        "VALUES ('" + req.body.username + "', '" + req.body.password + "', '" + req.body.email + "'",
+        function(err) {
+            if (err) {
+                next(err);
+                return;
+            }
+
+            res.status(200);
+            res.end();
         }
-        console.log(data);
-    });
-    res.send("respond with a resource");
+    );
+});
+
+router.get("/users/:username", function(req, res, next) {
+    connection.query(
+        "SELECT * " +
+        "FROM Users " +
+        "WHERE username = '" + req.params.username + "'",
+        function(err, data) {
+            if (err) {
+                next(err);
+                return;
+            }
+
+            res.status(200);
+            res.json(data);
+        }
+    );
+});
+
+router.get("/user_usernames/:username", function(req, res, next) {
+    connection.query(
+        "SELECT username " +
+        "FROM Users " +
+        "WHERE username = '" + req.params.username + "'",
+        function(err, data) {
+            if (err) {
+                next(err);
+                return;
+            }
+
+            res.status(200);
+            res.json(data);
+        }
+    );
 });
 
 module.exports = router;

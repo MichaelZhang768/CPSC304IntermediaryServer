@@ -67,7 +67,7 @@ router.get("/:username/dlcs", function(req, res, next) {
     connection.query(
         "SELECT dlcName, dlcPrice " +
         "FROM Developer INNER JOIN Game INNER JOIN DLC " +
-        "WHERE developerName = '" + req.params.username + "'",
+        "WHERE Developer.developerName = '" + req.params.username + "'",
         function(err, data) {
             if (err) {
                 next(err);
